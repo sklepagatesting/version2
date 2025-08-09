@@ -57,10 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function leaveTransition(done) {
-    // Animate leaving old page
+  function coverTransition(done) {
+    // Expand to cover the page
     transitionEl.style.opacity = "1";
     overlayEl.style.opacity = "1";
+
     transitionEl.style.bottom = "50%";
     transitionEl.style.width = "100vw";
     transitionEl.style.height = "100vh";
@@ -71,20 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(done, 1000); // Continue after animation
   }
 
-  function enterTransition(done) {
-    // Reverse animation for entering new page
-    transitionEl.style.bottom = "0";
-    transitionEl.style.width = "60px";
-    transitionEl.style.height = "10px";
-    transitionEl.style.borderRadius = "50%";
-    transitionEl.style.transform = "translateX(-50%) translateY(0) scale(1)";
-    overlayEl.style.background = "rgba(0,0,0,0)";
-
-    setTimeout(() => {
-      transitionEl.style.opacity = "0";
-      overlayEl.style.opacity = "0";
-      done();
-    }, 1000);
+  function hideTransitionElements() {
+    transitionEl.style.opacity = "0";
+    overlayEl.style.opacity = "0";
   }
 
   // Init Barba.js
@@ -93,11 +83,11 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         name: "custom-transition",
         async leave(data) {
-          await new Promise((resolve) => leaveTransition(resolve));
+          await new Promise((resolve) => coverTransition(resolve)); // Animate to full cover
         },
         async enter(data) {
+          hideTransitionElements(); // Hide immediately after page swap
           triggerTextAnimation();
-          await new Promise((resolve) => enterTransition(resolve));
         },
         async once(data) {
           setTimeout(() => {
